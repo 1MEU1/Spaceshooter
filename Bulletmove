@@ -1,0 +1,22 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Bulletmove : MonoBehaviour
+{
+
+    private Rigidbody rigid;
+
+    public float speed;
+
+    private void Awake()
+    {
+        rigid = GetComponent<Rigidbody>();
+    }
+
+    
+    void Update()
+    {
+        rigid.velocity = transform.forward * speed ;
+    }
+}
