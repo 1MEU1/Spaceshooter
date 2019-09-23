@@ -1,0 +1,66 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class playermove : MonoBehaviour
+{
+    private Vector3 movement;
+    public float minX ,maxX, minZ ,maxZ;
+    public float rot;
+    public GameObject bullet;
+    public Transform bulletSpawnPos;
+    public float nextFire = 1f;
+    
+
+    public float speed = 3f;
+    private Rigidbody rigid;
+    private float timer;
+    
+    void Start()
+    {
+        rigid = GetComponent<Rigidbody>();
+    }
+
+    
+    void FixedUpdate()
+    {
+        timer += Time.deltaTime;
+
+        float h = Input.GetAxisRaw("Horizontal");
+        float v = Input.GetAxisRaw("Vertical");
+        
+        //ateş etme
+        Move(h, v);
+        if (Input.GetButton("Fire1") && timer > nextFire)
+        {
+            Shoot();
+        }
+
+    }
+
+    void Move(float h, float v) 
+    {
+        movement.Set(h, 0, v);
+
+        //movament = new Vector3(h, 0, v);
+
+        movement = movement * speed * Time.deltaTime;
+
+        rigid.MovePosition(transform.position + movement);
+         
+        rigid.position = new Vector3 (Mathf.Clamp(rigid.position.x, minX, maxX), 0, Mathf.Clamp(rigid.position.z, minZ, maxZ));
+
+        rigid.velocity = movement * speed;
+
+        rigid.rotation = Quaternion.Euler(rigid.velocity.z * -rot, 0, rigid.velocity.x * -rot);
+        
+
+    }
+    
+    //kurşun oluşturma
+    void Shoot()
+    {
+        Instantiate(bullet,bulletSpawnPos.position,bulletSpawnPos.rotation);
+        timer = 0;
+    }
+}
