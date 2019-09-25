@@ -1,0 +1,27 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Camerafollow : MonoBehaviour
+{
+    public Transform player;
+    public float speed;
+
+    private Vector3 offset;
+
+
+    void Start()
+    {
+        offset = transform.position - player.position;
+    }
+
+    void FixedUpdate()
+    {
+        Vector3 fixedPos = player.position + offset;
+        Vector3 nextPos = Vector3.Lerp(transform.position,fixedPos, speed * Time.deltaTime);
+        transform.position = nextPos;
+
+       
+
+    }
+}
