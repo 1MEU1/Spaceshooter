@@ -1,0 +1,36 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class enemyMoement2 : MonoBehaviour
+{
+    [Header("iki nokta arasında düz bir şekilde gidip gelme")]
+    public float speed;
+    public Transform startPos, pos1, pos2;    
+    private Rigidbody rigid;
+    private Vector3 nextPos1;
+
+
+    private void Awake()
+    {
+        rigid = GetComponent<Rigidbody>();
+    }
+
+    private void Start()
+    {
+        nextPos1 = startPos.position;
+    }
+
+    void Update()
+    {
+
+        if (transform.position == pos1.position)
+        {
+            nextPos1 = pos2.position;
+        }
+        if (transform.position == pos2.position)
+        {
+            nextPos1 = pos1.position;
+        }
+
+        transform.position = Vector3.MoveTowards(transform.position,nextPos1,speed * Time.deltaTime);
