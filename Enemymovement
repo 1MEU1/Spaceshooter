@@ -1,0 +1,57 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+
+public class Enemymovement : MonoBehaviour
+
+{
+    public float speed = 5f;
+    public GameObject explosion;
+    public AudioClip deathSound;
+
+    private Rigidbody rigid;
+    public GameObject Enemybullet;
+    public Transform bulletSpawnPos;
+    public float nextFire = 1f;
+    private AudioSource audio;
+    private float timer;
+
+    private void Awake()
+    {
+        rigid = GetComponent<Rigidbody>();
+        audio = GetComponent<AudioSource>();
+        
+    }
+
+    
+    void Update()
+    {
+        timer += Time.deltaTime;
+
+        rigid.velocity = -transform.forward * speed;
+        if (timer> nextFire)
+        {
+            Shoot();
+        }
+    }
+
+    void Shoot()
+    {
+        Instantiate(Enemybullet, bulletSpawnPos.position, bulletSpawnPos.rotation);
+        audio.Play();
+        timer = 0;
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "Player" || other.tag == "Destroy")
+        {
+            Instantiate(explosion, transform.position, transform.rotation);
+            ScoreManager.score += 5;
+            AudioSource.PlayClipAtPoint(deathSound, transform.position);
+            Destroy(other.gameObject);
+            Destroy(gameObject);
+        }
+        
+    }
+}
