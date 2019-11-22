@@ -1,0 +1,76 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class enemyMoement2 : MonoBehaviour
+{
+    [Header("Düşman gemisi özellikleri")]
+    public float speed;
+    public GameObject Enemybullet;
+    public Transform startPos, pos1, pos2;
+    public Transform bulletSpawnPos;
+    private Rigidbody rigid;
+    private Vector3 nextPos1;
+    public float nextFire = 1f;
+    private AudioSource audio;
+    public GameObject explosion;
+    private float timer;
+    public AudioClip deathSound;
+
+
+
+    private void Awake()
+    {
+        rigid = GetComponent<Rigidbody>();
+        audio = GetComponent<AudioSource>();
+    }
+
+    private void Start()
+    {
+        nextPos1 = startPos.position;
+    }
+
+    void Update()
+    {
+
+        timer += Time.deltaTime;
+
+        if (transform.position == pos1.position)
+        {
+            nextPos1 = pos2.position;
+        }
+        if (transform.position == pos2.position)
+        {
+            nextPos1 = pos1.position;
+        }
+
+        transform.position = Vector3.MoveTowards(transform.position,nextPos1,speed * Time.deltaTime);
+
+        if (timer > nextFire)
+        {
+            Shoot();
+        }
+
+        
+    }
+
+    void Shoot()
+    {
+        Instantiate(Enemybullet, bulletSpawnPos.position, bulletSpawnPos.rotation);
+        audio.Play();
+        timer = 0;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "Player" || other.tag == "destroy")
+        {
+            Instantiate(explosion, transform.position, transform.rotation);
+            ScoreManager.score += 10;
+            AudioSource.PlayClipAtPoint(deathSound, transform.position);
+            Destroy(other.gameObject);
+            Destroy(gameObject);
+        }
+
+    }
+}
