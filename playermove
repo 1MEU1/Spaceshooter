@@ -10,15 +10,21 @@ public class playermove : MonoBehaviour
     public GameObject bullet;
     public Transform bulletSpawnPos;
     public float nextFire = 1f;
-    
+    public GameObject explosion;
+    public AudioClip deathSound;
+    public GameObject gameoverımg, gameoverText,restart,mainmanu;
 
+    private Camerafollow cam;
     public float speed = 3f;
     private Rigidbody rigid;
+    private AudioSource audio;
     private float timer;
     
     void Start()
     {
         rigid = GetComponent<Rigidbody>();
+        audio = GetComponent<AudioSource>();
+        cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camerafollow>();   
     }
 
     
@@ -28,8 +34,7 @@ public class playermove : MonoBehaviour
 
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
-        
-        //ateş etme
+
         Move(h, v);
         if (Input.GetButton("Fire1") && timer > nextFire)
         {
@@ -51,16 +56,32 @@ public class playermove : MonoBehaviour
         rigid.position = new Vector3 (Mathf.Clamp(rigid.position.x, minX, maxX), 0, Mathf.Clamp(rigid.position.z, minZ, maxZ));
 
         rigid.velocity = movement * speed;
-
+        
         rigid.rotation = Quaternion.Euler(rigid.velocity.z * -rot, 0, rigid.velocity.x * -rot);
         
 
     }
-    
-    //kurşun oluşturma
     void Shoot()
     {
         Instantiate(bullet,bulletSpawnPos.position,bulletSpawnPos.rotation);
+        audio.Play();
         timer = 0;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "Enemy" || other.tag == "Bullet")
+        {
+            Instantiate(explosion, transform.position, transform.rotation);
+            gameoverımg.SetActive(true);
+            gameoverText.SetActive(true);
+            restart.SetActive(true);
+            mainmanu.SetActive(true);
+            AudioSource.PlayClipAtPoint(deathSound, transform.position);
+            cam.enabled = false;
+            Destroy(other.gameObject);
+            Destroy(gameObject);    
+        }
+       
     }
 }
