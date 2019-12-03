@@ -1,0 +1,52 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Playermovement : MonoBehaviour
+
+{
+    public float speed = 10f ;
+    public float distance = 100f ;
+    public LayerMask mylayer;
+    public float turnspeed = 5f;
+
+    private Rigidbody rigid;  
+    private Vector3 movement;
+    private Vector3 moveTarget;
+    private Vector3 smoothVelocity;
+
+    private void Awake()
+    {
+        rigid = GetComponent<Rigidbody>();
+    }
+
+    private void FixedUpdate()
+    {
+        float h = Input.GetAxisRaw("Horizontal");
+        float v = Input.GetAxisRaw("Vertical");
+
+        Move(h, v);
+
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray,out hit,distance,mylayer))
+        {
+            Vector3 dir = hit.point - transform.position;
+            Quaternion newRot = Quaternion.LookRotation(dir);
+            Quaternion smootRot = Quaternion.Slerp(transform.rotation, newRot, turnspeed * Time.deltaTime);
+            rigid.MoveRotation(smootRot);
+            
+        }
+        
+    }
+
+    private void Move( float h ,float v)
+    {
+        movement = new Vector3(h, 0, v).normalized;//normalized uzunluğu yada büyüklüğü 1 olan bir birim vektör döndürür.
+        movement = movement * speed * Time.deltaTime;
+        moveTarget = Vector3.SmoothDamp(moveTarget, movement, ref smoothVelocity, .10f);
+
+        rigid.MovePosition(rigid.position + moveTarget);
+    }
+}
