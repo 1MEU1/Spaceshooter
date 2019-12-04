@@ -14,10 +14,12 @@ public class Playermovement : MonoBehaviour
     private Vector3 movement;
     private Vector3 moveTarget;
     private Vector3 smoothVelocity;
+    private Animator anim;
 
     private void Awake()
     {
         rigid = GetComponent<Rigidbody>();
+        anim = GetComponent<Animator>();
     }
 
     private void FixedUpdate()
@@ -26,18 +28,10 @@ public class Playermovement : MonoBehaviour
         float v = Input.GetAxisRaw("Vertical");
 
         Move(h, v);
-
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-
-        if (Physics.Raycast(ray,out hit,distance,mylayer))
-        {
-            Vector3 dir = hit.point - transform.position;
-            Quaternion newRot = Quaternion.LookRotation(dir);
-            Quaternion smootRot = Quaternion.Slerp(transform.rotation, newRot, turnspeed * Time.deltaTime);
-            rigid.MoveRotation(smootRot);
-            
-        }
+        Rotateplayer();
+        AnimatePlayer(h, v);
+        
+  
         
     }
 
@@ -49,4 +43,33 @@ public class Playermovement : MonoBehaviour
 
         rigid.MovePosition(rigid.position + moveTarget);
     }
+
+    void Rotateplayer()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit, distance, mylayer))
+        {
+            Vector3 dir = hit.point - transform.position;
+            Quaternion newRot = Quaternion.LookRotation(dir);
+            Quaternion smootRot = Quaternion.Slerp(transform.rotation, newRot, turnspeed * Time.deltaTime);
+            rigid.MoveRotation(smootRot);
+
+        }
+    }
+    private void AnimatePlayer(float h, float v)
+    {
+        if (h != 0 || v != 0)
+        {
+            anim.SetBool("run", true);
+        }
+        else
+        {
+            anim.SetBool("run", false);
+        }
+    }
+
+
 }
+
