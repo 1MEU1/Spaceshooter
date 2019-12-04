@@ -1,3 +1,4 @@
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -30,9 +31,7 @@ public class Playermovement : MonoBehaviour
         Move(h, v);
         Rotateplayer();
         AnimatePlayer(h, v);
-        
-  
-        
+             
     }
 
     private void Move( float h ,float v)
@@ -55,9 +54,9 @@ public class Playermovement : MonoBehaviour
             Quaternion newRot = Quaternion.LookRotation(dir);
             Quaternion smootRot = Quaternion.Slerp(transform.rotation, newRot, turnspeed * Time.deltaTime);
             rigid.MoveRotation(smootRot);
-
         }
     }
+
     private void AnimatePlayer(float h, float v)
     {
         if (h != 0 || v != 0)
@@ -69,7 +68,4 @@ public class Playermovement : MonoBehaviour
             anim.SetBool("run", false);
         }
     }
-
-
 }
-
