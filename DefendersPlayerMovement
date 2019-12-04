@@ -1,4 +1,3 @@
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -40,7 +39,7 @@ public class Playermovement : MonoBehaviour
         movement = movement * speed * Time.deltaTime;
         moveTarget = Vector3.SmoothDamp(moveTarget, movement, ref smoothVelocity, .10f);
 
-        rigid.MovePosition(rigid.position + moveTarget);
+        rigid.MovePosition(rigid.position + transform.TransformDirection(moveTarget));
     }
 
     void Rotateplayer()
@@ -68,4 +67,6 @@ public class Playermovement : MonoBehaviour
             anim.SetBool("run", false);
         }
     }
+
+
 }
